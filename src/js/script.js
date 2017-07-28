@@ -287,25 +287,24 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
       },
+      removeSelectInputInUserList: function(){
+        $(DOMstrings.selectUserInput).empty();
+      },
       
-      printSelectInputInGroupList: function(data){
-        
-        var htmlAll = '<option value="all">%option%</option>';
-        var newHtmlAll = htmlAll.replace('%option%', "All");
-
-        $(DOMstrings.selectGroupInput).append(newHtmlAll)
-
-        for (i=0;i<data.groups.length;i++){
-          var html = '<option value="'+data.groups[i].name +'">%option%</option>';
-          var newHtml = html.replace('%option%', data.groups[i].name);
-
-          $(DOMstrings.selectGroupInput).append(newHtml)
-        };
-      },
-      // *********************************************************
-      printSelectedGroup: function(data){
-        // print user only from group
-      },
+//      printSelectInputInGroupList: function(data){
+//        
+//        var htmlAll = '<option value="all">%option%</option>';
+//        var newHtmlAll = htmlAll.replace('%option%', "All");
+//
+//        $(DOMstrings.selectGroupInput).append(newHtmlAll)
+//
+//        for (i=0;i<data.groups.length;i++){
+//          var html = '<option value="'+data.groups[i].name +'">%option%</option>';
+//          var newHtml = html.replace('%option%', data.groups[i].name);
+//
+//          $(DOMstrings.selectGroupInput).append(newHtml)
+//        };
+//      },
 
       getInputsValues: function(){
         var addUserData = {
@@ -376,7 +375,6 @@ document.addEventListener("DOMContentLoaded", function () {
         $(DOMstrings.lastNameInput).val(data.lastName);
         $(DOMstrings.dateBirthInput).val(data.dateBirth);
         $(DOMstrings.selectUserInput).val(data.group);
-
       },
       
       putSelectedDataInGroupInputs: function(data){
@@ -574,6 +572,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
       // print add new user in List
       UIController.printGroupList(newData);
+      
+      // clear select input options
+      UIController.removeSelectInputInUserList();
+
+      //get updated data
+      var freshData = userController.getData();
+
+      //print new select list options
+      UIController.printSelectInputInUserList(freshData);
 
     };
 
@@ -639,6 +646,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
           //print new user list 
           UIController.printGroupList(userController.getData());
+          
+          // clear select input options
+          UIController.removeSelectInputInUserList();
+
+          //get updated data
+          var freshData = userController.getData();
+          
+          //print new select list options
+          UIController.printSelectInputInUserList(freshData);
         } else {
 
           // feedback false
@@ -724,6 +740,15 @@ document.addEventListener("DOMContentLoaded", function () {
           
           // clear inputs
           UIController.clearGroupInputs();
+          
+          // clear select input options
+          UIController.removeSelectInputInUserList();
+          
+          //get updated data
+          var freshData = userController.getData();
+          
+          //print new select list options
+          UIController.printSelectInputInUserList(freshData);
         } else {
 
           // feedback false
@@ -741,7 +766,7 @@ document.addEventListener("DOMContentLoaded", function () {
         UIController.printUserList(data);
         UIController.printGroupList(data);
         UIController.printSelectInputInUserList(data);
-        UIController.printSelectInputInGroupList(data);
+//        UIController.printSelectInputInGroupList(data);
         ctrlAddUser;
         setupEventListeners();
 //        $(DOMstrings.selectUserInput).val(2);
