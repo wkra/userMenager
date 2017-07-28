@@ -50,7 +50,12 @@ document.addEventListener("DOMContentLoaded", function () {
       },
 
       addUser: function(obj){
-        var newId = (data.users[data.users.length-1].id)+1;
+        var newId
+        if (data.users.length > 0){
+          newId = (data.users[data.users.length-1].id)+1;
+        } else {
+          newId = 1;
+        }
 
         var newUser = new User(newId, obj.name, obj.password, obj.firstName, obj.lastName, obj.dateBirth, obj.group);
 
@@ -58,6 +63,25 @@ document.addEventListener("DOMContentLoaded", function () {
         data.users.push(newUser);
 
         return newUser
+      },
+       
+      addGroup: function(obj){
+
+        var newId
+        if (data.groups.length > 0){
+          newId = (data.groups[data.groups.length-1].id)+1;
+        } else {
+          newId = 1;
+        }
+        
+        var newGroup = new Group(newId, obj.name);
+        
+        //add new user to data
+        data.groups.push(newGroup);
+
+        //return new user to print
+        return newGroup
+        
       },
 
       setSelectedUserId: function(val){
@@ -72,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
         selectedGroupId = val;
       },
 
-      getSelectedGropId: function(){
+      getSelectedGroupId: function(){
         return selectedGroupId;
       },
 
@@ -86,6 +110,21 @@ document.addEventListener("DOMContentLoaded", function () {
           return true
         } else {
           
+          //send error feedback
+          return false
+        }
+      },
+      
+      removeGroup: function(posInArray){
+
+        if (posInArray >= 0 ){
+          // remove user
+          data.groups.splice(posInArray,1);
+
+          //send success feedback
+          return true
+        } else {
+
           //send error feedback
           return false
         }
@@ -105,13 +144,41 @@ document.addEventListener("DOMContentLoaded", function () {
           return false
         }
 
+      },     
+      
+      editGroup: function(posInArray, newData){
+
+        if (posInArray >= 0 ){
+          // edit user
+          data.groups.splice(posInArray, 1, newData);
+
+          //send success feedback
+          return true
+        } else {
+
+          //send error feedback
+          return false
+        }
+
       },
         
-      findIdInArray: function(idVal){
+      findIdInUsersArray: function(idVal){
         var numberInArray = -1;
 
         for (i=0; i < data.users.length; i++){
           if (idVal == data.users[i].id){
+            numberInArray = i;
+            break;
+          };
+        };
+        return numberInArray;
+      },
+     
+      findIdInGroupsArray: function(idVal){
+        var numberInArray = -1;
+
+        for (i=0; i < data.groups.length; i++){
+          if (idVal == data.groups[i].id){
             numberInArray = i;
             break;
           };
@@ -148,6 +215,7 @@ document.addEventListener("DOMContentLoaded", function () {
       firstNameInput: ".firstNameInput",
       lastNameInput: ".lastNameInput",
       dateBirthInput: ".dateBirthInput",
+      selectUserInput: ".selectUserInput",
       selectGroupInput: ".selectGroupInput",
       addUserBtn: ".addUserBtn",
       editUserBtn: ".editUserBtn",
@@ -155,6 +223,7 @@ document.addEventListener("DOMContentLoaded", function () {
       userListTable: ".userListTable",
       groupListTable: ".groupListTable",
       idList: ".idList",
+      idGroupList: ".idGroupList",
       nameList: ".nameList",
       nameGroupList: ".nameGroupList",
       passwordList: ".passwordList",
@@ -195,7 +264,6 @@ document.addEventListener("DOMContentLoaded", function () {
       },
       
       printGroupList: function(data){
-        console.log(data)
         for (i=0;i<data.groups.length;i++){
 
           var html = '<tr><th scope="row" class="idGroupList">%id%</th><td class="nameGroupList">%name%</td></tr>';
@@ -207,17 +275,36 @@ document.addEventListener("DOMContentLoaded", function () {
 
       },
 
-      printSelectGroupInput: function(data){
+      printSelectInputInUserList: function(data){
 
         for (i=0;i<data.groups.length;i++){
 
           var html = '<option value="'+data.groups[i].name +'">%option%</option>';
           var newHtml = html.replace('%option%', data.groups[i].name);
 
-        $(".selectGroupInput").append(newHtml)
+          $(DOMstrings.selectUserInput).append(newHtml)
 
         };
 
+      },
+      
+      printSelectInputInGroupList: function(data){
+        
+        var htmlAll = '<option value="all">%option%</option>';
+        var newHtmlAll = htmlAll.replace('%option%', "All");
+
+        $(DOMstrings.selectGroupInput).append(newHtmlAll)
+
+        for (i=0;i<data.groups.length;i++){
+          var html = '<option value="'+data.groups[i].name +'">%option%</option>';
+          var newHtml = html.replace('%option%', data.groups[i].name);
+
+          $(DOMstrings.selectGroupInput).append(newHtml)
+        };
+      },
+      // *********************************************************
+      printSelectedGroup: function(data){
+        // print user only from group
       },
 
       getInputsValues: function(){
@@ -227,9 +314,16 @@ document.addEventListener("DOMContentLoaded", function () {
           firstName: $(DOMstrings.firstNameInput).val(),
           lastName: $(DOMstrings.lastNameInput).val(),
           dateBirth: $(DOMstrings.dateBirthInput).val(),
-          group: $(DOMstrings.selectGroupInput).val(),
+          group: $(DOMstrings.selectUserInput).val(),
         };
 
+        return addUserData;
+      },
+      
+      getInputsGroupValues: function(){
+        var addUserData = {
+          name: $(DOMstrings.nameGroupInput).val(),
+        };
         return addUserData;
       },
 
@@ -241,7 +335,7 @@ document.addEventListener("DOMContentLoaded", function () {
         $(DOMstrings.dateBirthInput).val("");
 
         //don't clear group
-//        $(DOMstrings.selectGroupInput).val("");
+//        $(DOMstrings.selectUserInput).val("");
       },
       
       clearGroupInputs: function(){
@@ -266,15 +360,13 @@ document.addEventListener("DOMContentLoaded", function () {
       },
       
       takeGroupNameData: function(data){
-        
         var parentNode = $(data).parent();
 
         var selectedUser = {
+          id: $(parentNode).find(DOMstrings.idGroupList).text(),
           name: $(parentNode).find(DOMstrings.nameGroupList).text(),
         };
-
         return selectedUser;
-        
       },
 
       putSelectedDataInInputs: function(data){
@@ -283,7 +375,7 @@ document.addEventListener("DOMContentLoaded", function () {
         $(DOMstrings.firstNameInput).val(data.firstName);
         $(DOMstrings.lastNameInput).val(data.lastName);
         $(DOMstrings.dateBirthInput).val(data.dateBirth);
-        $(DOMstrings.selectGroupInput).val(data.group);
+        $(DOMstrings.selectUserInput).val(data.group);
 
       },
       
@@ -293,6 +385,9 @@ document.addEventListener("DOMContentLoaded", function () {
       },
       removeUserList: function(){
         $(DOMstrings.userListTable).empty();
+      },
+      removeGroupList: function(){
+        $(DOMstrings.groupListTable).empty();
       }
 
 
@@ -310,8 +405,14 @@ document.addEventListener("DOMContentLoaded", function () {
     // events listeners
     var setupEventListeners = function(){
 
-      // add btn
+      // add user btn
       $(DOMstrings.addUserBtn).click(ctrlAddUser);
+      
+      // remove user btn
+      $(DOMstrings.remUserBtn).click(ctrlRemoveUser);
+
+      // edit user btn
+      $(DOMstrings.editUserBtn).click(ctrlEditUser);
 
       //selected user
       $(DOMstrings.userListTable).click(function(event){
@@ -322,12 +423,18 @@ document.addEventListener("DOMContentLoaded", function () {
       $(DOMstrings.groupListTable).click(function(event){
         ctrlGroupSelectedData(event.target);
       });
-
-      // remove btn
-      $(DOMstrings.remUserBtn).click(ctrlRemoveUser);
       
-      // edit btn
-      $(DOMstrings.editUserBtn).click(ctrlEditUser);
+      // add group btn
+      $(DOMstrings.addGroupBtn).click(ctrlAddGroup);
+
+      // remove group btn
+      $(DOMstrings.remGroupBtn).click(ctrlRemoveGroup);
+
+      // edit group btn
+      $(DOMstrings.editGroupBtn).click(ctrlEditGroup);
+
+
+      // print user list from selected group
 
 
     };
@@ -347,7 +454,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // put data in inputs
         UIController.putSelectedDataInInputs(selectedData);
-
 
         // set selected user id
         userController.setSelectedUserId(selectedData.id);
@@ -451,6 +557,25 @@ document.addEventListener("DOMContentLoaded", function () {
       UIController.printUserList(newData);
 
     };
+    
+    var ctrlAddGroup = function (){
+
+      // get Data from inputs
+      var input = UIController.getInputsGroupValues();
+
+      // clear add Inputs
+      UIController.clearGroupInputs();
+
+      // add item to data
+      var newItem = userController.addGroup(input);
+
+      // prepare data to print List
+      var newData = {users: "", groups: [newItem]};
+
+      // print add new user in List
+      UIController.printGroupList(newData);
+
+    };
 
     var ctrlRemoveUser = function(){
 
@@ -462,7 +587,7 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
         
         // find position in array
-        var arrayPosition = userController.findIdInArray(selectedId);
+        var arrayPosition = userController.findIdInUsersArray(selectedId);
 
         
         if (userController.removeUser(arrayPosition) === true){
@@ -487,10 +612,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     };
     
-    var ctrlEditUser = function(){
-      var selectedId = userController.getSelectedUserId();
-      console.log('selectedId')
-      console.log(selectedId)
+    var ctrlRemoveGroup = function(){
+
+      var selectedId = userController.getSelectedGroupId();
 
       //check is the user selected
       if (selectedId < 0){
@@ -498,7 +622,41 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
 
         // find position in array
-        var arrayPosition = userController.findIdInArray(selectedId);
+        var arrayPosition = userController.findIdInGroupsArray(selectedId);
+
+
+        if (userController.removeGroup(arrayPosition) === true){
+          //remove user
+
+          // feedback success
+          console.log("user removed");
+
+          //remove user list
+          UIController.removeGroupList();
+
+          // clear inputs
+          UIController.clearGroupInputs();
+
+          //print new user list 
+          UIController.printGroupList(userController.getData());
+        } else {
+
+          // feedback false
+          console.log("group not found")
+        }
+      }
+    };
+    
+    var ctrlEditUser = function(){
+      var selectedId = userController.getSelectedUserId();
+
+      //check is the user selected
+      if (selectedId < 0){
+        console.log("Please select user.")
+      } else {
+
+        // find position in array
+        var arrayPosition = userController.findIdInUsersArray(selectedId);
         
         // get data from inputs
         var dataInputs = UIController.getInputsValues();
@@ -530,6 +688,48 @@ document.addEventListener("DOMContentLoaded", function () {
           console.log("user not found")
         }
       }
+    };    
+    
+    var ctrlEditGroup = function(){
+      var selectedId = userController.getSelectedGroupId();
+
+      //check is the user selected
+      if (selectedId < 0){
+        console.log("Please select user.")
+      } else {
+
+        // find position in array
+        var arrayPosition = userController.findIdInGroupsArray(selectedId);
+        
+        // get data from inputs
+        var dataInputs = UIController.getInputsGroupValues();
+        
+        // put id to data
+        dataInputs.id = selectedId;
+        
+        // change group name to group id
+        var inputWithIdGroup = userController.changeNameToIdGroup(dataInputs)
+
+        if (userController.editGroup(arrayPosition, inputWithIdGroup) === true){
+          //edit user
+
+          // feedback success
+          console.log("user edited");
+
+          //remove user list
+          UIController.removeGroupList();
+
+          //print new user list
+          UIController.printGroupList(userController.getData());
+          
+          // clear inputs
+          UIController.clearGroupInputs();
+        } else {
+
+          // feedback false
+          console.log("user not found")
+        }
+      }
     };
 
 
@@ -540,10 +740,11 @@ document.addEventListener("DOMContentLoaded", function () {
         var data = userController.getData();
         UIController.printUserList(data);
         UIController.printGroupList(data);
-        UIController.printSelectGroupInput(data);
+        UIController.printSelectInputInUserList(data);
+        UIController.printSelectInputInGroupList(data);
         ctrlAddUser;
         setupEventListeners();
-//        $(DOMstrings.selectGroupInput).val(2);
+//        $(DOMstrings.selectUserInput).val(2);
       }
     }
 
