@@ -162,7 +162,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <!-- build:js -->
     <script src="js/plugins.js"></script>
-    <script src="js/db.js"></script>
+    <!-- <script src="js/db.js"></script> -->
     <script src="js/script.js"></script>
 
     <!-- endbuild  -->

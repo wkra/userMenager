@@ -43,7 +43,7 @@ $(document).ready(function(){
         console.log(error);
       }
     });
-  };
+  }; 
   
   /*SEND USER TO DB*/
   function sendUserToDb(obj) { 

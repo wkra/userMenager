@@ -27,19 +27,57 @@ document.addEventListener("DOMContentLoaded", function () {
     var selectedUserId = -1;
     var selectedGroupId = -1;
 
-    data.users[0] = new User(1, 'LudBet', 'pass', 'Ludwig', 'Bethvoven', '1770-12-15', 1);
-    data.users[0] = new User(1, 'LudBet', 'pass', 'Ludwig', 'Bethvoven', '1770-12-15', 1);
-    data.users[1] = new User(2, 'WolMoz', 'pass', 'Wolfgang', 'Mozart', '1756-01-27', 1);
-    data.users[2] = new User(3, 'FrydCho', 'pass', 'Fryderyk', 'Chopin', '1810-03-01', 1);
-    data.users[3] = new User(4, 'KryZim', 'pass', 'Krystian', 'Zimerman', '1956-12-05', 2);
-
-    data.groups[0] = new Group(1, 'composer');
-    data.groups[1] = new Group(2, 'pianist');
-
     // public methods
     return{
       testing: function(){
         alert(data);
+      },
+      
+      getDataFromDB: function (callback){
+        /*GET USERS FROM DB*/
+        $.ajax({
+          type:"GET", 
+          url:"php/getUsersFromDb.php", 
+          contentType:"application/json; charset=utf-8", 
+          dataType:'json',
+          success: function(json) { 
+
+            for (i=0;i<json.length;i++){
+              var newUserFromDB = new User (json[i][0], json[i][1], json[i][2], json[i][3], json[i][4], json[i][5], json[i][6]);
+
+              data.users.push(newUserFromDB)
+            }
+          
+            /*GET GROUPS FROM DB*/
+            $.ajax({
+              type:"GET", 
+              url:"php/getGroupsFromDb.php", 
+              contentType:"application/json; charset=utf-8", 
+              dataType:'json',
+              success: function(json) { 
+
+                for (i=0;i<json.length;i++){
+                  var newGroupFromDB = new Group (json[i][0], json[i][1]);
+
+                  data.groups.push(newGroupFromDB)
+                }
+                //function callback
+                if($.isFunction(callback)) {callback();};
+              },
+              error: function(err) {
+                alert( "Error");
+                console.log(err); 
+              }
+              
+            });
+            
+          },
+          error: function(err) {
+            alert( "Error");
+            console.log(err); 
+          }
+        });
+        console.log(data);
       },
 
       getData: function(){
@@ -49,40 +87,72 @@ document.addEventListener("DOMContentLoaded", function () {
         return data.groups;
       },
 
-      addUser: function(obj){
-        var newId
-        if (data.users.length > 0){
-          newId = (data.users[data.users.length-1].id)+1;
-        } else {
-          newId = 1;
+      addUser: function(option, obj, callback){
+        console.log('addUser')
+        console.log(obj)
+        
+        //add user
+        if(option === 'user'){
+          $.ajax({
+            type:"POST", 
+            url:"php/sendUser.php", 
+            data: {
+              name: obj.name,
+              password: obj.password,
+              firstName: obj.firstName,
+              lastName: obj.lastName,
+              dateBirth: obj.dateBirth,
+              group: obj.group,
+            }, 
+            success:function() {
+              //function callback
+              if($.isFunction(callback)) {callback();};
+            },
+            error: function(error) {
+              alert( "Error");
+              console.log(error);
+            }
+          });
         }
+        
+        // add group
+        if (option === "group"){
+          $.ajax({
+            type:"POST", 
+            url:"php/sendGroup.php", 
+            data: {name: obj.name}, 
+            success:function() {
+              //function callback
+              if($.isFunction(callback)) {callback();};
+            },
+            error: function(error) {
+              alert( "Error");
+              console.log(error);
+            }
+          });
+        }
+ 
 
-        var newUser = new User(newId, obj.name, obj.password, obj.firstName, obj.lastName, obj.dateBirth, obj.group);
-
-        //add new user to data
-        data.users.push(newUser);
-
-        return newUser
       },
        
-      addGroup: function(obj){
-
-        var newId
-        if (data.groups.length > 0){
-          newId = (data.groups[data.groups.length-1].id)+1;
-        } else {
-          newId = 1;
-        }
-        
-        var newGroup = new Group(newId, obj.name);
-        
-        //add new user to data
-        data.groups.push(newGroup);
-
-        //return new user to print
-        return newGroup
-        
-      },
+//      addGroup: function(obj){
+//
+//        var newId
+//        if (data.groups.length > 0){
+//          newId = (data.groups[data.groups.length-1].id)+1;
+//        } else {
+//          newId = 1;
+//        }
+//        
+//        var newGroup = new Group(newId, obj.name);
+//        
+//        //add new user to data
+//        data.groups.push(newGroup);
+//
+//        //return new user to print
+//        return newGroup
+//        
+//      },
 
       setSelectedUserId: function(val){
         selectedUserId = val;
@@ -99,36 +169,72 @@ document.addEventListener("DOMContentLoaded", function () {
       getSelectedGroupId: function(){
         return selectedGroupId;
       },
-
-      removeUser: function(posInArray){
-
-        if (posInArray >= 0 ){
+// ************************************************************
+      removeUser: function(option, idVal, callback){
+        console.log('idVal')
+        console.log(idVal)
+        if (idVal >= 0 ){
           // remove user
-          data.users.splice(posInArray,1);
+          if (option === "user"){
+            $.ajax({
+              type:"POST", 
+              url:"php/deleteUser.php", 
+              data: {id: idVal}, 
+              success : function() {
+                if($.isFunction(callback)) {callback(data);};
+              },
+
+              error: function(err) {
+                alert( "Error.");
+                console.log(err); 
+              }
+            });
+            
+          }
           
-          //send success feedback
-          return true
-        } else {
-          
-          //send error feedback
-          return false
+          if (option === "group"){
+            $.ajax({
+              type:"POST", 
+              url:"php/deleteGroup.php", 
+              data: {id: idVal}, 
+              success : function() {
+                if($.isFunction(callback)) {callback(data);};
+              },
+
+              error: function(err) {
+                alert( "Error.");
+                console.log(err); 
+              }
+            });
+            // remove group
+          }
+//          // remove user
+//          data.users.splice(posInArray,1);
+//          
+//          //send success feedback
+//          return true
+//        } else {
+//          
+//          //send error feedback
+//          return false
         }
       },
       
-      removeGroup: function(posInArray){
-
-        if (posInArray >= 0 ){
-          // remove user
-          data.groups.splice(posInArray,1);
-
-          //send success feedback
-          return true
-        } else {
-
-          //send error feedback
-          return false
-        }
-      },
+//      removeGroup: function(posInArray){
+//
+//        if (posInArray >= 0 ){
+//          // remove group
+//          data.groups.splice(posInArray,1);
+//
+//          //send success feedback
+//          return true
+//        } else {
+//
+//          //send error feedback
+//          return false
+//        }
+//      },
+  
       
       editUser: function(posInArray, newData){
         
@@ -162,29 +268,42 @@ document.addEventListener("DOMContentLoaded", function () {
 
       },
         
-      findIdInUsersArray: function(idVal){
-        var numberInArray = -1;
-
-        for (i=0; i < data.users.length; i++){
-          if (idVal == data.users[i].id){
-            numberInArray = i;
-            break;
-          };
-        };
-        return numberInArray;
-      },
+//      findIdInUsersArray: function(option, idVal){
+//        console.log('idVal')
+//        console.log(idVal)
+//        var numberInArray = -1;
+//
+//        if (option === "user"){
+//          for (i=0; i < idVal; i++){
+//            if (idVal == data.users[i].id){
+//              numberInArray = i;
+//              break;
+//            };
+//          }; 
+//        } if (option === "group"){
+//          for (i=0; i < idVal; i++){
+//            if (idVal == data.groups[i].id){
+//              numberInArray = i;
+//              break;
+//            };
+//          };      
+//        }
+//        console.log('numberInArray')
+//        console.log(numberInArray)
+//        return numberInArray;
+//      },
      
-      findIdInGroupsArray: function(idVal){
-        var numberInArray = -1;
-
-        for (i=0; i < data.groups.length; i++){
-          if (idVal == data.groups[i].id){
-            numberInArray = i;
-            break;
-          };
-        };
-        return numberInArray;
-      },
+//      findIdInGroupsArray: function(idVal){
+//        var numberInArray = -1;
+//
+//        for (i=0; i < data.groups.length; i++){
+//          if (idVal == data.groups[i].id){
+//            numberInArray = i;
+//            break;
+//          };
+//        };
+//        return numberInArray;
+//      },
       
       changeNameToIdGroup: function(obj){
     
@@ -197,6 +316,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
         return obj;
         },
+      removeTempData: function(){
+        data.users.splice(0,data.users.length);
+        data.groups.splice(0,data.groups.length);
+      }
       
       
      // end of return 
@@ -247,7 +370,7 @@ document.addEventListener("DOMContentLoaded", function () {
       printUserList: function(data){
         for (i=0;i<data.users.length;i++){
 
-          var html = '<tr><th scope="row" class="idList">%id%</th><td class="nameList">%name%</td><td class="passwordList">%password%</td><td class="firstNameList">%firstName%</td><td class="lastNameList">%lastName%</td><td class="dateBirthList">%dateBirth%</td><td class="groupList">%group%</td></tr>';
+          var html = '<tr><th scope="row" class="idList">%id%</th><td class="nameList">%name%</td><td class="passwordList">%password%</td><td class="firstNameList">%firstName%</td><td class="lastNameList">%lastName%</td><td class="dateBirthList">%dateBirth%</td><td class="groupList">undefined</td></tr>';
           var newHtml = html.replace('%name%', data.users[i].name);
           var newHtml = newHtml.replace('%id%', data.users[i].id);
           var newHtml = newHtml.replace('%password%', data.users[i].password);
@@ -255,8 +378,13 @@ document.addEventListener("DOMContentLoaded", function () {
           var newHtml = newHtml.replace('%lastName%', data.users[i].lastName);
           var newHtml = newHtml.replace('%dateBirth%', data.users[i].dateBirth);
           
-          var newHtml = newHtml.replace('%group%', data.groups[data.users[i].group-1].name); // -1 if group start count from 1
-          
+          //find group name
+          for (ii=0;ii < data.groups.length;ii++){
+            if(data.users[i].group == data.groups[ii].id){
+              var newHtml = newHtml.replace('undefined', data.groups[ii].name);
+              break;
+            }
+          }     
 
           $(DOMstrings.userListTable).append(newHtml)
         };
@@ -264,6 +392,7 @@ document.addEventListener("DOMContentLoaded", function () {
       },
       
       printGroupList: function(data){
+        console.log("printGroupList")
         for (i=0;i<data.groups.length;i++){
 
           var html = '<tr><th scope="row" class="idGroupList">%id%</th><td class="nameGroupList">%name%</td></tr>';
@@ -305,58 +434,78 @@ document.addEventListener("DOMContentLoaded", function () {
 //          $(DOMstrings.selectGroupInput).append(newHtml)
 //        };
 //      },
-
-      getInputsValues: function(){
-        var addUserData = {
-          name: $(DOMstrings.nameInput).val(),
-          password: $(DOMstrings.passwordInput).val(),
-          firstName: $(DOMstrings.firstNameInput).val(),
-          lastName: $(DOMstrings.lastNameInput).val(),
-          dateBirth: $(DOMstrings.dateBirthInput).val(),
-          group: $(DOMstrings.selectUserInput).val(),
-        };
-
+//*******************************************************************
+      getInputsValues: function(option){
+        
+        if (option === 'user'){
+          var addUserData = {
+            name: $(DOMstrings.nameInput).val(),
+            password: $(DOMstrings.passwordInput).val(),
+            firstName: $(DOMstrings.firstNameInput).val(),
+            lastName: $(DOMstrings.lastNameInput).val(),
+            dateBirth: $(DOMstrings.dateBirthInput).val(),
+            group: $(DOMstrings.selectUserInput).val(),
+          };
+        }
+          if (option === 'group'){
+            var addUserData = {
+              name: $(DOMstrings.nameGroupInput).val(),
+            };
+          };
+        console.log('addUserData')
+        console.log(addUserData)
         return addUserData;
       },
       
-      getInputsGroupValues: function(){
-        var addUserData = {
-          name: $(DOMstrings.nameGroupInput).val(),
-        };
-        return addUserData;
-      },
+//      getInputsGroupValues: function(){
+//        var addUserData = {
+//          name: $(DOMstrings.nameGroupInput).val(),
+//        };
+//        return addUserData;
+//      },
 
       clearInputs: function(){
+        // user inputs
         $(DOMstrings.nameInput).val("");
         $(DOMstrings.passwordInput).val("");
         $(DOMstrings.firstNameInput).val("");
         $(DOMstrings.lastNameInput).val("");
         $(DOMstrings.dateBirthInput).val("");
+        
+        // group input
+        $(DOMstrings.nameGroupInput).val("");
 
         //don't clear group
 //        $(DOMstrings.selectUserInput).val("");
       },
       
-      clearGroupInputs: function(){
-        $(DOMstrings.nameGroupInput).val("");
-      },
+//      clearGroupInputs: function(){
+//        $(DOMstrings.nameGroupInput).val("");
+//      },
 
-      takeDataFromRow: function(data){
+      takeDataFromRow: function(option, data){
 
         var parentNode = $(data).parent();
-
-        var selectedUser = {
-          id: $(parentNode).find(DOMstrings.idList).text(),
-          name: $(parentNode).find(DOMstrings.nameList).text(),
-          password: $(parentNode).find(DOMstrings.passwordList).text(),
-          firstName: $(parentNode).find(DOMstrings.firstNameList).text(),
-          lastName: $(parentNode).find(DOMstrings.lastNameList).text(),
-          dateBirth: $(parentNode).find(DOMstrings.dateBirthList).text(),
-          group: $(parentNode).find(DOMstrings.groupList).text(),
-        };
-
+           
+        if (option === 'user'){
+          var selectedUser = {
+            id: $(parentNode).find(DOMstrings.idList).text(),
+            name: $(parentNode).find(DOMstrings.nameList).text(),
+            password: $(parentNode).find(DOMstrings.passwordList).text(),
+            firstName: $(parentNode).find(DOMstrings.firstNameList).text(),
+            lastName: $(parentNode).find(DOMstrings.lastNameList).text(),
+            dateBirth: $(parentNode).find(DOMstrings.dateBirthList).text(),
+            group: $(parentNode).find(DOMstrings.groupList).text(),
+          };
+        } if (option === 'group'){
+          var selectedUser = {
+            id: $(parentNode).find(DOMstrings.idGroupList).text(),
+            name: $(parentNode).find(DOMstrings.nameGroupList).text(),
+          };
+        }
         return selectedUser;
       },
+      
       
       takeGroupNameData: function(data){
         var parentNode = $(data).parent();
@@ -402,31 +551,41 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // events listeners
     var setupEventListeners = function(){
-
-      // add user btn
-      $(DOMstrings.addUserBtn).click(ctrlAddUser);
       
-      // remove user btn
-      $(DOMstrings.remUserBtn).click(ctrlRemoveUser);
+      //selected user
+      $(DOMstrings.userListTable).click(function(event){
+        ctrlUserSelectedData('user', event.target);
+      });
+
+      //selected group
+      $(DOMstrings.groupListTable).click(function(event){
+        ctrlUserSelectedData('group', event.target);
+      });
+      
+      // remove user btn 
+      $(DOMstrings.remUserBtn).click(function(){
+        ctrlRemoveUser('user')
+      });
+      
+      // remove group btn
+      $(DOMstrings.remGroupBtn).click(function(){
+        ctrlRemoveUser('group')
+      });
+
+      // add user btn **********************************************
+      $(DOMstrings.addUserBtn).click(function(){
+        ctrlAddUser('user')
+      });
+      
+      // add group btn
+      $(DOMstrings.addGroupBtn).click(function(){
+        ctrlAddUser('group')
+      });
+      
 
       // edit user btn
       $(DOMstrings.editUserBtn).click(ctrlEditUser);
 
-      //selected user
-      $(DOMstrings.userListTable).click(function(event){
-        ctrlUserSelectedData(event.target);
-      });
-      
-      //selected group
-      $(DOMstrings.groupListTable).click(function(event){
-        ctrlGroupSelectedData(event.target);
-      });
-      
-      // add group btn
-      $(DOMstrings.addGroupBtn).click(ctrlAddGroup);
-
-      // remove group btn
-      $(DOMstrings.remGroupBtn).click(ctrlRemoveGroup);
 
       // edit group btn
       $(DOMstrings.editGroupBtn).click(ctrlEditGroup);
@@ -436,236 +595,295 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     };
-
-    var ctrlUserSelectedData = function(el) {
-
-      // class with no dot
-      var dangerNoDot = DOMstrings.dangerClass.slice(1)
-
-      // part of putting data to inputs
-      var selectedData = UIController.takeDataFromRow(el);
-
-      if ($(DOMstrings.dangerClass).length === 0){
-
-        // select row
-        $(el).parent().addClass(dangerNoDot);
-
-        // put data in inputs
-        UIController.putSelectedDataInInputs(selectedData);
-
-        // set selected user id
-        userController.setSelectedUserId(selectedData.id);
-
-      } else if ($(el).parent().hasClass(dangerNoDot) === false){
-
-        // unselect row
-        $(DOMstrings.dangerClass).removeClass(dangerNoDot);
-
-        //select row
-        $(el).parent().addClass(dangerNoDot);
-
-        // put data in inputs
-        UIController.putSelectedDataInInputs(selectedData);
-
-        // set selected user id
-        userController.setSelectedUserId(selectedData.id);
-      } else {
-
-        //unselect row
-        $(DOMstrings.dangerClass).removeClass(dangerNoDot);
-
-        // clear add Inputs
-        UIController.clearInputs();
-
-        // set selected id to -1
-        userController.setSelectedUserId(-1);
-        userController.setSelectedGroupId(-1);
-      };
-
-
-    };
     
-    var ctrlGroupSelectedData = function(el) {
-
-      // class with no dot
-      var dangerNoDot = DOMstrings.dangerClass.slice(1)
-
-      // part of putting data to inputs
-      var selectedData = UIController.takeGroupNameData(el);
-
-      if ($(DOMstrings.dangerClass).length === 0){
-
-        // select row
-        $(el).parent().addClass(dangerNoDot);
-
-        // put data in inputs
-        UIController.putSelectedDataInGroupInputs(selectedData);
-
-        // set selected group id
-        userController.setSelectedGroupId(selectedData.id);
-
-      } else if ($(el).parent().hasClass(dangerNoDot) === false){
-
-        // unselect row
-        $(DOMstrings.dangerClass).removeClass(dangerNoDot);
-
-        //select row
-        $(el).parent().addClass(dangerNoDot);
-
-        // put data in inputs 
-        UIController.putSelectedDataInGroupInputs(selectedData);
-
-        // set selected user id
-        userController.setSelectedGroupId(selectedData.id);
-      } else {
-
-        //unselect row
-        $(DOMstrings.dangerClass).removeClass(dangerNoDot);
-
-        // clear add Inputs
-        UIController.clearGroupInputs();
-
-        // set selected id to -1
-        userController.setSelectedUserId(-1);
-        userController.setSelectedGroupId(-1);
-      };
-
-
-    };
-
-    var ctrlAddUser = function (){
-
-      // get Data from inputs
-      var input = UIController.getInputsValues();
-      
-      // change group name to group id
-      var inputWithIdGroup = userController.changeNameToIdGroup(input)
-
-      // clear add Inputs
-      UIController.clearInputs();
-      
-      // add item to data
-      var newItem = userController.addUser(inputWithIdGroup);
-      
-      // get group data - with names
-      var groupData = userController.getGroupData();
-
-      // prepare data to print List
-      var newData = {users: [newItem], groups: groupData};
-
-      // print add new user in List
-      UIController.printUserList(newData);
-
-    };
-    
-    var ctrlAddGroup = function (){
-
-      // get Data from inputs
-      var input = UIController.getInputsGroupValues();
-
-      // clear add Inputs
-      UIController.clearGroupInputs();
-
-      // add item to data
-      var newItem = userController.addGroup(input);
-
-      // prepare data to print List
-      var newData = {users: "", groups: [newItem]};
-
-      // print add new user in List
-      UIController.printGroupList(newData);
-      
-      // clear select input options
+    var clearAllAndPrint = function(){
+      //remove lists
+      UIController.removeUserList();
+      UIController.removeGroupList();
       UIController.removeSelectInputInUserList();
 
-      //get updated data
-      var freshData = userController.getData();
+      // clear inputs
+      UIController.clearInputs();
 
-      //print new select list options
-      UIController.printSelectInputInUserList(freshData);
+      //remove temp data
+      userController.removeTempData();
 
+      //print new lists
+      userController.getDataFromDB(function(data){
+        var data = userController.getData();
+        UIController.printUserList(data);
+        UIController.printGroupList(data);
+        UIController.printSelectInputInUserList(data);
+      });
     };
 
-    var ctrlRemoveUser = function(){
+    var ctrlUserSelectedData = function(option, el) {
 
+      // class with no dot
+      var dangerNoDot = DOMstrings.dangerClass.slice(1)
+
+      // part of putting data to inputs
+      var selectedData = UIController.takeDataFromRow(option, el);
+
+      if ($(DOMstrings.dangerClass).length === 0){
+
+        // select row
+        $(el).parent().addClass(dangerNoDot);
+
+        // put selected data to user inputs
+        if (option === "user"){
+          // put data in inputs
+          UIController.putSelectedDataInInputs(selectedData);
+
+          // set selected user id
+          userController.setSelectedUserId(selectedData.id);
+          
+        // put selected data to group inputs
+        } if (option === "group"){
+          // put data in inputs
+          UIController.putSelectedDataInGroupInputs(selectedData);
+
+          // set selected group id
+          userController.setSelectedGroupId(selectedData.id);
+        }
+
+
+      } else if ($(el).parent().hasClass(dangerNoDot) === false){
+
+        // unselect row
+        $(DOMstrings.dangerClass).removeClass(dangerNoDot);
+        
+        // clear all Inputs
+        UIController.clearInputs();
+        UIController.clearGroupInputs();
+
+        //select row
+        $(el).parent().addClass(dangerNoDot);
+
+        // put selected data to user inputs
+        if (option === "user"){
+          
+          // put data in inputs
+          UIController.putSelectedDataInInputs(selectedData);
+
+          // set selected user id
+          userController.setSelectedUserId(selectedData.id);
+        
+        // put selected data to group inputs
+        } if (option === "group"){
+          
+          // put data in inputs
+          UIController.putSelectedDataInGroupInputs(selectedData);
+
+          // set selected group id
+          userController.setSelectedGroupId(selectedData.id);
+        }
+      } else {
+        //unselect row
+        $(DOMstrings.dangerClass).removeClass(dangerNoDot);
+
+        // clear all  Inputs
+        UIController.clearInputs();
+        UIController.clearGroupInputs();
+
+        // set all selected id to -1
+        userController.setSelectedUserId(-1);
+        userController.setSelectedGroupId(-1);
+      };
+      
+    };
+    
+//    var ctrlGroupSelectedData = function(el) {
+//
+//      // class with no dot
+//      var dangerNoDot = DOMstrings.dangerClass.slice(1)
+//
+//      // part of putting data to inputs
+//      var selectedData = UIController.takeGroupNameData(el);
+//
+//      if ($(DOMstrings.dangerClass).length === 0){
+//
+//        // select row
+//        $(el).parent().addClass(dangerNoDot);
+//
+//        // put data in inputs
+//        UIController.putSelectedDataInGroupInputs(selectedData);
+//
+//        // set selected group id
+//        userController.setSelectedGroupId(selectedData.id);
+//
+//      } else if ($(el).parent().hasClass(dangerNoDot) === false){
+//
+//        // unselect row
+//        $(DOMstrings.dangerClass).removeClass(dangerNoDot);
+//
+//        //select row
+//        $(el).parent().addClass(dangerNoDot);
+//
+//        // put data in inputs 
+//        UIController.putSelectedDataInGroupInputs(selectedData);
+//
+//        // set selected user id
+//        userController.setSelectedGroupId(selectedData.id);
+//      } else {
+//
+//        //unselect row
+//        $(DOMstrings.dangerClass).removeClass(dangerNoDot);
+//
+//        // clear add Inputs
+//        UIController.clearGroupInputs();
+//
+//        // set selected id to -1
+//        userController.setSelectedUserId(-1);
+//        userController.setSelectedGroupId(-1);
+//      };
+//
+//
+//    };
+
+    var ctrlAddUser = function (option){
+
+      // get Data from inputs
+      var input = UIController.getInputsValues(option);
+
+
+      // if user - change group name to group id
+      if (option === "user"){
+        var input = userController.changeNameToIdGroup(input)
+      }
+      
+//      // clear add Inputs 
+//      UIController.clearInputs();
+      
+      // add item to data *******************************************
+      var newItem = userController.addUser(option, input, function(){
+        clearAllAndPrint();
+        
+      });
+      
+      alert(option + " added.")
+      
+////      // get group data - with names
+////      var groupData = userController.getGroupData();
+////
+////      // prepare data to print List
+////      var newData = {users: [newItem], groups: groupData};
+//
+//      //print new lists
+//      userController.getDataFromDB(function(data){
+//        var data = userController.getData();
+//        UIController.printUserList(data);
+//        UIController.printGroupList(data);
+//        UIController.printSelectInputInUserList(data);
+
+
+    };
+    
+//    var ctrlAddGroup = function (){
+//
+//      // get Data from inputs
+//      var input = UIController.getInputsGroupValues();
+//
+//      // clear add Inputs
+//      UIController.clearGroupInputs();
+//
+//      // add item to data
+//      var newItem = userController.addGroup(input);
+//
+//      // prepare data to print List
+//      var newData = {users: "", groups: [newItem]};
+//
+//      // print add new user in List
+//      UIController.printGroupList(newData);
+//      
+//      // clear select input options
+//      UIController.removeSelectInputInUserList();
+//
+//      //get updated data
+//      var freshData = userController.getData();
+//
+//      //print new select list options
+//      UIController.printSelectInputInUserList(freshData);
+//
+//    };
+
+    var ctrlRemoveUser = function(option){
       // get selected user flag
-      var selectedId = userController.getSelectedUserId();
+      var selectedId = -1;
+      if (option === 'user'){
+        selectedId = userController.getSelectedUserId();
+      } if (option === 'group'){
+        selectedId = userController.getSelectedGroupId();
+      }
 
     //check is the user selected
       if (selectedId < 0){
-        alert("Please select user.")
+        alert("Please select " + option +".")
       } else {
         
-        // find position in array
-        var arrayPosition = userController.findIdInUsersArray(selectedId);
+//        // find position in array 
+//        var arrayPosition = userController.findIdInUsersArray(option, selectedId);
+//        console.log(arrayPosition)
 
-        
-        if (userController.removeUser(arrayPosition) === true){
-          //remove user
-          
-          //remove user list
-          UIController.removeUserList();
-          
-          // clear inputs
-          UIController.clearInputs();
 
-          //print new user list
-          UIController.printUserList(userController.getData());
+        userController.removeUser(option, selectedId, function(){
+          // callback function
           
+          // clear and print
+          clearAllAndPrint()
+
           // feedback success
-          alert("User removed.");
-      } else {
-        
-        // feedback false
-        alert("User not found.")
-      }
+          alert(option + " removed.");
+          
+        }) 
+
     }
     };
     
-    var ctrlRemoveGroup = function(){
-
-      // get selected group flag
-      var selectedId = userController.getSelectedGroupId();
-
-      //check is the user selected
-      if (selectedId < 0){
-        alert("Please select group.")
-      } else {
-
-        // find position in array
-        var arrayPosition = userController.findIdInGroupsArray(selectedId);
-
-
-        if (userController.removeGroup(arrayPosition) === true){
-          //remove user
-
-          //remove user list
-          UIController.removeGroupList();
-
-          // clear inputs
-          UIController.clearGroupInputs();
-
-          //print new user list 
-          UIController.printGroupList(userController.getData());
-          
-          // clear select input options
-          UIController.removeSelectInputInUserList();
-
-          //get updated data
-          var freshData = userController.getData();
-          
-          //print new select list options
-          UIController.printSelectInputInUserList(freshData);
-          
-          // feedback success
-          alert("Group removed.");
-        } else {
-
-          // feedback false
-          alert("Group not found.")
-        }
-      }
-    };
+//    var ctrlRemoveGroup = function(){
+//
+//      // get selected group flag
+//      var selectedId = userController.getSelectedGroupId();
+//
+//      //check is the user selected
+//      if (selectedId < 0){
+//        alert("Please select group.")
+//      } else {
+//
+//        // find position in array
+//        var arrayPosition = userController.findIdInGroupsArray(selectedId);
+//
+//
+//        if (userController.removeGroup(arrayPosition) === true){
+//          //remove user
+//
+//          //remove user list
+//          UIController.removeGroupList();
+//
+//          // clear inputs
+//          UIController.clearGroupInputs();
+//
+//          //print new user list 
+//          UIController.printGroupList(userController.getData());
+//          
+//          // clear select input options
+//          UIController.removeSelectInputInUserList();
+//
+//          //get updated data
+//          var freshData = userController.getData();
+//          
+//          //print new select list options
+//          UIController.printSelectInputInUserList(freshData);
+//          
+//          // feedback success
+//          alert("Group removed.");
+//        } else {
+//
+//          // feedback false
+//          alert("Group not found.")
+//        }
+//      }
+//    };
     
     var ctrlEditUser = function(){
       var selectedId = userController.getSelectedUserId();
@@ -772,12 +990,15 @@ document.addEventListener("DOMContentLoaded", function () {
     return {
       init: function(){
         console.log("App has started");
-        var data = userController.getData();
-        UIController.printUserList(data);
-        UIController.printGroupList(data);
-        UIController.printSelectInputInUserList(data);
-        ctrlAddUser;
-        setupEventListeners();
+        userController.getDataFromDB(function(data){
+          var data = userController.getData();
+          UIController.printUserList(data);
+          UIController.printGroupList(data);
+          UIController.printSelectInputInUserList(data);
+//          ctrlAddUser;
+          setupEventListeners();
+        })
+        
       }
     }
 
