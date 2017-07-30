@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // USER CONTROLLER
   var userController = (function(){
 
+    // user constructor
     var User = function(id, name, password, firstName, lastName, dateBirth, group){
       this.id = id;
       this.name = name;
@@ -14,11 +15,13 @@ document.addEventListener("DOMContentLoaded", function () {
       this.group = group;
     };
 
+    // group constructor
     var Group = function(id, name){
       this.id = id;
       this.name = name;
     };
 
+    // temporary data
     var data = {
       users: [],
       groups: [],
@@ -35,6 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
         $.ajax({
           type:"GET",
           url:"php/getData.php",
+          cache: false, //**
           data: {table: "users"},
           contentType:"application/json; charset=utf-8",
           dataType:'json',
@@ -51,6 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
             $.ajax({
               type:"GET",
               url:"php/getData.php",
+              cache: false, //**
               data: {table: "groups"},
               contentType:"application/json; charset=utf-8",
               dataType:'json',
@@ -94,6 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
           $.ajax({
             type:"POST",
             url:"php/add.php",
+            cache: false, //**
             data: {
               table: tableName,
               name: obj.name,
@@ -103,6 +109,8 @@ document.addEventListener("DOMContentLoaded", function () {
               dateBirth: obj.dateBirth,
               group: obj.group,
             },
+            dataType : 'text',
+
             success:function() {
               //function callback
               if($.isFunction(callback)) {callback();};
@@ -114,6 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
           });
       },
 
+      // set flag for selected user row
       setSelectedUserId: function(val){
         selectedUserId = val;
       },
@@ -122,6 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return selectedUserId;
       },
 
+      // set flag for selected group row
       setSelectedGroupId: function(val){
         selectedGroupId = val;
       },
@@ -139,10 +149,13 @@ document.addEventListener("DOMContentLoaded", function () {
             $.ajax({
               type:"POST",
               url:"php/remove.php",
+              cache: false, //**
               data: {
                 table: tableName,
                 id: idVal,
               },
+              dataType : 'text',
+
               success : function() {
                 if($.isFunction(callback)) {callback(data);};
               },
@@ -163,6 +176,7 @@ document.addEventListener("DOMContentLoaded", function () {
           $.ajax({
             type:"POST",
             url:"php/edit.php",
+            cache: false, //**
             data: {
               table: tableName,
               id: idVal,
@@ -173,6 +187,8 @@ document.addEventListener("DOMContentLoaded", function () {
               dateBirth: obj.dateBirth,
               group: obj.group,
             },
+            dataType : 'text',
+
             success:function() {
               //function callback
               if($.isFunction(callback)) {callback();};

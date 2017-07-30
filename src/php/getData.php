@@ -6,15 +6,15 @@ require_once('connect.php');
 
 $table = $_GET['table'];
 
-$zapytanie_pobierz = "SELECT * FROM $table";
+$query = "SELECT * FROM $table";
 
-$wynik_pobierz = mysqli_query($db, $zapytanie_pobierz);
+$response = mysqli_query($db, $query);
 
-$pobrane_dane = array();
+$data = array();
 
-while ($wiersz = mysqli_fetch_row($wynik_pobierz))
+while ($row = mysqli_fetch_row($response))
 {
-  $pobrane_dane[] = $wiersz;
+  $data[] = $row;
 }
 
 if (mysqli_connect_errno()){
@@ -22,6 +22,6 @@ if (mysqli_connect_errno()){
   exit;
 }
 
-echo json_encode($pobrane_dane);
+echo json_encode($data);
 
 ?>
