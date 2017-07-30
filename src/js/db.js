@@ -182,7 +182,7 @@ console.log(idVal)
     });
   };
   
-  editGroupInDb(data.groups[0]);
+//  editGroupInDb(data.groups[0]);
   function editGroupInDb(obj) { 
     console.log(obj.id);
     console.log(obj.name);

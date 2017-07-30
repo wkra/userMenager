@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // public methods
     return{
       testing: function(){
-        console.log(data);
+        alert(data);
       },
 
       getData: function(){
@@ -414,7 +414,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       //selected user
       $(DOMstrings.userListTable).click(function(event){
-        ctrlSelectedData(event.target);
+        ctrlUserSelectedData(event.target);
       });
       
       //selected group
@@ -437,7 +437,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     };
 
-    var ctrlSelectedData = function(el) {
+    var ctrlUserSelectedData = function(el) {
 
       // class with no dot
       var dangerNoDot = DOMstrings.dangerClass.slice(1)
@@ -477,8 +477,9 @@ document.addEventListener("DOMContentLoaded", function () {
         // clear add Inputs
         UIController.clearInputs();
 
-        // set selected user id to -1
+        // set selected id to -1
         userController.setSelectedUserId(-1);
+        userController.setSelectedGroupId(-1);
       };
 
 
@@ -524,8 +525,9 @@ document.addEventListener("DOMContentLoaded", function () {
         // clear add Inputs
         UIController.clearGroupInputs();
 
-        // set selected user id to -1
+        // set selected id to -1
         userController.setSelectedUserId(-1);
+        userController.setSelectedGroupId(-1);
       };
 
 
@@ -586,11 +588,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     var ctrlRemoveUser = function(){
 
+      // get selected user flag
       var selectedId = userController.getSelectedUserId();
 
     //check is the user selected
       if (selectedId < 0){
-        console.log("Please select user.")
+        alert("Please select user.")
       } else {
         
         // find position in array
@@ -600,9 +603,6 @@ document.addEventListener("DOMContentLoaded", function () {
         if (userController.removeUser(arrayPosition) === true){
           //remove user
           
-          // feedback success
-          console.log("user removed");
-          
           //remove user list
           UIController.removeUserList();
           
@@ -611,21 +611,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
           //print new user list
           UIController.printUserList(userController.getData());
+          
+          // feedback success
+          alert("User removed.");
       } else {
         
         // feedback false
-        console.log("user not found")
+        alert("User not found.")
       }
     }
     };
     
     var ctrlRemoveGroup = function(){
 
+      // get selected group flag
       var selectedId = userController.getSelectedGroupId();
 
       //check is the user selected
       if (selectedId < 0){
-        console.log("Please select user.")
+        alert("Please select group.")
       } else {
 
         // find position in array
@@ -634,9 +638,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if (userController.removeGroup(arrayPosition) === true){
           //remove user
-
-          // feedback success
-          console.log("user removed");
 
           //remove user list
           UIController.removeGroupList();
@@ -655,10 +656,13 @@ document.addEventListener("DOMContentLoaded", function () {
           
           //print new select list options
           UIController.printSelectInputInUserList(freshData);
+          
+          // feedback success
+          alert("Group removed.");
         } else {
 
           // feedback false
-          console.log("group not found")
+          alert("Group not found.")
         }
       }
     };
@@ -668,7 +672,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       //check is the user selected
       if (selectedId < 0){
-        console.log("Please select user.")
+        alert("Please select user.")
       } else {
 
         // find position in array
@@ -681,14 +685,14 @@ document.addEventListener("DOMContentLoaded", function () {
         dataInputs.id = selectedId;
         
         // change group name to group id
-        var inputWithIdGroup = userController.changeNameToIdGroup(dataInputs)
+        var inputWithIdGroup = userController.changeNameToIdGroup(dataInputs);
 
 
         if (userController.editUser(arrayPosition, inputWithIdGroup) === true){
           //edit user
 
           // feedback success
-          console.log("user edited");
+          alert("User edited");
 
           //remove user list
           UIController.removeUserList();
@@ -701,7 +705,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
 
           // feedback false
-          console.log("user not found")
+          alert("User not found.")
         }
       }
     };    
@@ -711,7 +715,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       //check is the user selected
       if (selectedId < 0){
-        console.log("Please select user.")
+        alert("Please select group.")
       } else {
 
         // find position in array
@@ -730,29 +734,36 @@ document.addEventListener("DOMContentLoaded", function () {
           //edit user
 
           // feedback success
-          console.log("user edited");
+          alert("Group edited.");
 
-          //remove user list
+          //remove group list
           UIController.removeGroupList();
 
-          //print new user list
-          UIController.printGroupList(userController.getData());
-          
           // clear inputs
           UIController.clearGroupInputs();
           
           // clear select input options
           UIController.removeSelectInputInUserList();
           
+          //remove user list
+          UIController.removeUserList();
+          
           //get updated data
           var freshData = userController.getData();
           
+          //print new user list
+          UIController.printUserList(freshData);
+          
           //print new select list options
           UIController.printSelectInputInUserList(freshData);
+          
+          //print new group list
+          UIController.printGroupList(freshData);
+
         } else {
 
           // feedback false
-          console.log("user not found")
+          alert("Group not found.")
         }
       }
     };
@@ -761,15 +772,12 @@ document.addEventListener("DOMContentLoaded", function () {
     return {
       init: function(){
         console.log("App has started");
-//        console.log(userController.getData());
         var data = userController.getData();
         UIController.printUserList(data);
         UIController.printGroupList(data);
         UIController.printSelectInputInUserList(data);
-//        UIController.printSelectInputInGroupList(data);
         ctrlAddUser;
         setupEventListeners();
-//        $(DOMstrings.selectUserInput).val(2);
       }
     }
 
