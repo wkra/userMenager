@@ -30,7 +30,7 @@
           </div>
           <div class="header--item">
 
-            <h1>User menager</h1>
+            <h1>User manager</h1>
           </div>
 
         </div>
@@ -62,9 +62,9 @@
         </div>
         <!-- end user list -->
 
-        <!--  user menager -->
+        <!--  user manager -->
         <div class="panel panel-primary">
-          <div class="panel-heading">User menager</div>
+          <div class="panel-heading">User manager</div>
           <div class="panel-body">
             <form>
               <div class="input-group">
@@ -98,7 +98,7 @@
             </form>
           </div>
         </div>
-        <!-- end user menager -->
+        <!-- end user manager -->
 
 
         <!-- group list -->
@@ -123,9 +123,9 @@
         </div>
         <!-- end user list -->
 
-        <!--  user menager -->
+        <!--  user manager -->
         <div class="panel panel-primary">
-          <div class="panel-heading">Group menager</div>
+          <div class="panel-heading">Group manager</div>
           <div class="panel-body">
             <form>
               <div class="input-group">
@@ -139,7 +139,7 @@
             </form>
           </div>
         </div>
-        <!-- end user menager -->
+        <!-- end user manager -->
 
 
       </div><!-- end of conainter -->
