@@ -17,6 +17,11 @@ while ($wiersz = mysqli_fetch_row($wynik_pobierz))
   $pobrane_dane[] = $wiersz;
 }
 
+if (mysqli_connect_errno()){
+  echo "Error";
+  exit;
+}
+
 echo json_encode($pobrane_dane);
 
 ?>

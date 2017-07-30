@@ -29,9 +29,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // public methods
     return{
-      testing: function(){
-        alert(data);
-      },
 
       getDataFromDB: function (callback){
         /*GET USERS FROM DB*/
@@ -553,6 +550,10 @@ document.addEventListener("DOMContentLoaded", function () {
           //clear all and print new all
           clearAllAndPrint();
 
+          // set all selected id to -1
+          userController.setSelectedUserId(-1);
+          userController.setSelectedGroupId(-1);
+
           //feedback
           alert(option + " added.");
         });
@@ -578,6 +579,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
           // clear and print
           clearAllAndPrint()
+
+          // set all selected id to -1
+          userController.setSelectedUserId(-1);
+          userController.setSelectedGroupId(-1);
 
           // feedback success
           alert(option + " removed.");
@@ -618,6 +623,10 @@ document.addEventListener("DOMContentLoaded", function () {
           //clear all and print new all
           clearAllAndPrint();
 
+          // set all selected id to -1
+          userController.setSelectedUserId(-1);
+          userController.setSelectedGroupId(-1);
+
           // feedback
           alert(option + " edited.")
         });
@@ -642,9 +651,8 @@ document.addEventListener("DOMContentLoaded", function () {
   })(userController, UIController);
   // END GLOBAL APP CONTROLLER
 
-
-// end DOMContentLoaded
-
   controller.init();
+
+  // end DOMContentLoaded
 });
 
