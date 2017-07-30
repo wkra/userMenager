@@ -18,41 +18,22 @@
   </head>
   <body>
     <header>
-      <div class="container">
-        <div class="header">
-          <div class="header--item">
-            <!--
-            <div class="input-group input-group-sm">
-              <span class="input-group-addon"><i class="fa fa-search" aria-hidden="true"></i></span>
-              <input type="text" class="form-control add-city--input" placeholder="Type name of city">
 
+
+          <div class="container">
+            <h1><i class="fa fa-user-plus" aria-hidden="true"></i>  User manager</h1>
           </div>
-            <div class="add-city--message alert alert-info">
-              <div class="message--spinner message--spinner__show">
-              <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
-              </div>
-              <div class="message--p ">
-                <p class="add-city--p">Loading</p>
-              </div>
-            </div>
-            -->
-          </div>
-          <div class="header--item">
 
-            <h1>User menager</h1>
-        </div>
 
-        </div>
-      </div>
     </header>
     <section class="section">
       <div class="container">
-        
+
         <!-- user list -->
         <div class="panel panel-primary">
           <div class="panel-heading">User List</div>
-          <div class="panel-body">
-            <table class="table table-striped table-hover">
+          <div class="panel-body table-responsive">
+            <table class="table table-striped table-hover ">
               <thead>
                 <tr>
                   <th>Id</th>
@@ -71,9 +52,9 @@
         </div>
         <!-- end user list -->
 
-        <!--  user menager -->
+        <!--  user manager -->
         <div class="panel panel-primary">
-          <div class="panel-heading">User menager</div>
+          <div class="panel-heading">User manager</div>
           <div class="panel-body">
             <form>
               <div class="input-group">
@@ -101,23 +82,24 @@
                 <select class="form-control selectUserInput">
                 </select>
               </div>
-              <button type="button" class="btn btn-primary add-city--button addUserBtn">Add user</button>
-              <button type="button" class="btn btn-primary add-city--button editUserBtn ">Edit user</button>
-              <button type="button" class="btn btn-primary add-city--button remUserBtn ">Remove user</button>
+              <button type="button" class="btn btn-success add-city--button addUserBtn"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add user</button>
+              <button type="button" class="btn btn-primary add-city--button editUserBtn "><i class="fa fa-edit" aria-hidden="true"></i> Edit user</button>
+              <button type="button" class="btn btn-danger add-city--button remUserBtn "><i class="fa fa-minus-circle" aria-hidden="true"></i> Remove user</button>
+              <p class="button--message">*To edit or remove, please select user.</p>
             </form>
           </div>
         </div>
-        <!-- end user menager -->
-        
-        
+        <!-- end user manager -->
+
+
         <!-- group list -->
         <div class="panel panel-primary">
           <div class="panel-heading">Group List
-          
-          </div>
-          <div class="panel-body">
 
-            
+          </div>
+          <div class="panel-body table-responsive">
+
+
             <table class="table table-striped table-hover">
               <thead>
                 <tr>
@@ -132,9 +114,9 @@
         </div>
         <!-- end user list -->
 
-        <!--  user menager -->
+        <!--  user manager -->
         <div class="panel panel-primary">
-          <div class="panel-heading">Group menager</div>
+          <div class="panel-heading">Group manager</div>
           <div class="panel-body">
             <form>
               <div class="input-group">
@@ -142,15 +124,16 @@
                 <input type="text" class="form-control groupInput nameGroupInput" placeholder="Name">
               </div>
 
-              <button type="button" class="btn btn-primary add-city--button addGroupBtn">Add Group</button>
-              <button type="button" class="btn btn-primary add-city--button editGroupBtn ">Edit Group</button>
-              <button type="button" class="btn btn-primary add-city--button remGroupBtn ">Remove Group</button>
+              <button type="button" class="btn btn-success add-city--button addGroupBtn"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add Group</button>
+              <button type="button" class="btn btn-primary add-city--button editGroupBtn "><i class="fa fa-edit" aria-hidden="true"></i> Edit Group</button>
+              <button type="button" class="btn btn-danger add-city--button remGroupBtn "><i class="fa fa-minus-circle" aria-hidden="true"></i> Remove Group</button>
+              <p class="button--message">*To edit or remove, please select group.</p>
             </form>
           </div>
         </div>
-        <!-- end user menager -->
-        
-        
+        <!-- end user manager -->
+
+
       </div><!-- end of conainter -->
     </section>
     <footer>
@@ -160,12 +143,13 @@
         </div>
       </div>
     </footer>
-
+    <!-- sQuery -->
     <script
   src="https://code.jquery.com/jquery-3.2.1.min.js"
   integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
   crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
      <!-- build:js -->
     <script src="js/plugins.js"></script>
     <script src="js/script.js"></script>

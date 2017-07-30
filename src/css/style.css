@@ -1,43 +1,13 @@
-@keyframes iconAnimation {
-  0% {
-    transform: translateX(0) translateY(0) rotate(0); }
-  20% {
-    transform: translateX(0) translateY(-3px) rotate(3deg); }
-  50% {
-    transform: translateX(0) translateY(0) rotate(0); }
-  70% {
-    transform: translateX(0) translateY(-3px) rotate(-3deg); }
-  100% {
-    transform: translateX(0) translateY(0) rotate(); } }
-
 body, html {
   height: 100%;
   background-color: white; }
 
-.section {
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-direction: row;
-      flex-direction: row;
-  -ms-flex-pack: center;
-      justify-content: center;
-  -ms-flex-wrap: wrap;
-      flex-wrap: wrap;
-  -ms-flex-align: start;
-      align-items: flex-start;
-  -ms-flex-flow: wrap;
-      flex-flow: wrap;
-  padding-bottom: 50px; }
+h1 {
+  font-size: 45px;
+  padding: 40px; }
 
-.section--item {
-  background-color: #f6f6f6;
-  height: 250px;
-  width: 250px;
-  text-align: center;
-  margin: 20px;
-  line-height: 250px;
-  border-radius: 20px;
-  box-shadow: 0px 0px 20px 0px #eee, inset 0px 0px 2px 0 #bdbdbd; }
+.section {
+  padding-bottom: 50px; }
 
 .header {
   display: -ms-flexbox;
@@ -86,17 +56,14 @@ body, html {
 .message--spinner__show {
   opacity: 1; }
 
-@media (min-width: 768px) {
-  .header {
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-pack: distribute;
-        justify-content: space-around;
-    -ms-flex-direction: row;
-        flex-direction: row;
-    -ms-flex-flow: wrap;
-        flex-flow: wrap; }
-  .header--item {
-    -ms-flex: 1;
-        flex: 1;
-    text-align: center; } }
+.input-group {
+  padding-bottom: 15px; }
+
+.button--message {
+  font-size: 11px;
+  color: #9a9a9a;
+  letter-spacing: 3px;
+  padding-top: 10px; }
+
+.panel-heading {
+  font-weight: bold; }
