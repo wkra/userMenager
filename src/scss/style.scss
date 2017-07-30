@@ -5,6 +5,10 @@ body, html {
   height: 100%;
   background-color: white;
 }
+h1{
+  font-size: 45px;
+  padding: 40px;
+}
 
 .section {
   display:flex;
@@ -70,6 +74,37 @@ $section--item--val: 250px;
 }
 .message--spinner__show{
   opacity: 1;
+}
+
+.input-group {
+  padding-bottom: 15px;
+}
+.button--message{
+  font-size: 11px;
+  color: #9a9a9a;
+  letter-spacing: 3px;
+  padding-left: 10px;
+}
+.row {
+  -moz-column-width: 28em;
+  -webkit-column-width: 28em;
+  column-width: 28em;
+  -moz-column-gap: .5em;
+  -webkit-column-gap: .5em;
+  column-gap: .5em;
+}
+.container{
+  margin-left: 0;
+  margin-right:0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.panel {
+  width: 100%;
+}
+.panel-heading {
+  font-weight: bold;
 }
 
 // IMPORT MEDIA

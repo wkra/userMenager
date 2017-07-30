@@ -14,6 +14,10 @@ body, html {
   height: 100%;
   background-color: white; }
 
+h1 {
+  font-size: 45px;
+  padding: 40px; }
+
 .section {
   display: -ms-flexbox;
   display: flex;
@@ -86,17 +90,31 @@ body, html {
 .message--spinner__show {
   opacity: 1; }
 
-@media (min-width: 768px) {
-  .header {
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-pack: distribute;
-        justify-content: space-around;
-    -ms-flex-direction: row;
-        flex-direction: row;
-    -ms-flex-flow: wrap;
-        flex-flow: wrap; }
-  .header--item {
-    -ms-flex: 1;
-        flex: 1;
-    text-align: center; } }
+.input-group {
+  padding-bottom: 15px; }
+
+.button--message {
+  font-size: 11px;
+  color: #9a9a9a;
+  letter-spacing: 3px;
+  padding-left: 10px; }
+
+.row {
+  column-width: 28em;
+  column-gap: .5em; }
+
+.container {
+  margin-left: 0;
+  margin-right: 0;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-align: center;
+      align-items: center;
+  -ms-flex-direction: column;
+      flex-direction: column; }
+
+.panel {
+  width: 100%; }
+
+.panel-heading {
+  font-weight: bold; }
